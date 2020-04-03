@@ -1,6 +1,6 @@
 """The second most basic components of our computer, the logic gates!"""
 
-from transistor import transistor
+from .transistor import transistor
 
 def AND(A, B, source=1):
     source, out1 = transistor(A, source=source)
