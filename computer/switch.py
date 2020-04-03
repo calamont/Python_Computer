@@ -1,13 +1,5 @@
 """Various switches that can be built using our logic gates."""
-from logic import AND, OR, NOT, NOR
-
-class DLatch(SRLatch):
-
-    def __call__(self, input=0, enable=0):
-        set_val = AND(input, enable)
-        reset_val = AND(NOT(input), enable)
-        return super().__call__(set_val, reset_val)
-        
+from .logic import AND, OR, NOT, NOR
         
 class SRLatch:
 
@@ -28,6 +20,12 @@ class SRLatch:
 
         return self.Q, self.inv_Q
 
+class DLatch(SRLatch):
+
+    def __call__(self, input=0, enable=0):
+        set_val = AND(input, enable)
+        reset_val = AND(NOT(input), enable)
+        return super().__call__(set_val, reset_val)
 
 class OneBitRegister(DLatch):
 
