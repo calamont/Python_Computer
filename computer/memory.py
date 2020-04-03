@@ -1,4 +1,5 @@
 """The static RAM for the computer."""
+from .bus import BUS
 from .logic import AND, NOT
 from .switch import OneBitRegister
 
