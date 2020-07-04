@@ -1,4 +1,5 @@
 """Various switches that can be built using our logic gates."""
+from . import bus
 from .logic import AND, OR, NOT, NOR
         
 class SRLatch:
@@ -6,6 +7,7 @@ class SRLatch:
     def __init__(self): 
         self.Q = 1
         self.inv_Q = 0
+        self.BUS = BUS
 
     def __call__(self, set_val=0, reset_val=0):
         # TODO: create and raise InvalidStateError if set_val and reset_val
@@ -38,15 +40,7 @@ class OneBitRegister(DLatch):
         D_input1 = AND(self.Q, inv_load)
         D_input2 = AND(load, input)
         D_input = OR(D_input1, D_input2)
-        output =  super().__call__(D_input, clock)[0]
-        return self.tri_state_logic(input, output, enable)
-
-    @staticmethod
-    def tri_state_logic(input, output, enable):
-        if enable:
-            return output
-        return input
-
+        return super().__call__(D_input, clock)[0]
 
 class NBitRegister:
 
@@ -54,11 +48,16 @@ class NBitRegister:
         self.n_bits = n_bits
         self.bits = [OneBitRegister() for _ in range(self.n_bits)]
 
-    def __call__(self, input=None, load=0, clock=0, enable=0):
+    def __call__(self, load=0, clock=0, enable=0, input=None):
+        # TODO: `input` is being used for debugging. Change to bus.BUS.
         if input is None:
-            input = [0] * self.n_bits
-
+            input = bus.BUS
         output = []
         for bit, i in zip(self.bits, input):
             output.append(bit(i, load, clock, enable))
-        return output
+        tri_state_logic(output, enable)
+
+def tri_state_logic(output, enable):
+    # TODO: work out if this is only meant to occur on a clock pulse.
+    if enable:
+        bus.BUS = output

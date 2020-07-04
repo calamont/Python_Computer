@@ -1,4 +1,5 @@
 """The functions to allow the computer to compute."""
+# from .bus import BUS
 from .logic import AND, OR, XOR, NOT
 
 def half_adder(A, B):
