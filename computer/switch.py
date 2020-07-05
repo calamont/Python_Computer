@@ -7,7 +7,7 @@ class SRLatch:
     def __init__(self): 
         self.Q = 1
         self.inv_Q = 0
-        self.BUS = BUS
+        # self.BUS = BUS
 
     def __call__(self, set_val=0, reset_val=0):
         # TODO: create and raise InvalidStateError if set_val and reset_val
@@ -56,9 +56,10 @@ class NBitRegister:
         output = []
         for bit, i in zip(self.bits, input):
             output.append(bit(i, load, clock))  # if load=0 it will read stored values
-        tri_state_logic(output, enable)  # if enable=1 output stored values to the bus
+        # tri_state_logic(output, enable)  # if enable=1 output stored values to the bus
 
-def tri_state_logic(output, enable):
+def tri_state_logic(input, output, enable):
     # TODO: work out if this is only meant to occur on a clock pulse.
     if enable:
-        bus.BUS = output
+        return input
+    return output
