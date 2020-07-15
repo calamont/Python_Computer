@@ -14,6 +14,12 @@ def AND(A, B, source=1):
     B, source, out2 = transistor(1, source=B, drain=source)
     return source
 
+def multi_AND(*input):
+    out = 1
+    for i in input:
+        out = AND(i, out)
+    return out
+
 # def OR(A, B, source=1):
 #     source, out1 = transistor(A)
 #     source, out2 = transistor(B)

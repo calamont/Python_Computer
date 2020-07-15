@@ -1,7 +1,7 @@
 """The static RAM for the computer."""
 # from .bus import BUS
 from .transistor import transistor
-from .logic import AND, NOT, tri_state
+from .logic import AND, NOT, tri_state, multi_AND
 from .switch import OneBitRegister, tri_state_logic
 
 
@@ -28,15 +28,8 @@ def nbit_decoder(input, idx=0, address=None, results=None):
         try:
             nbit_decoder(input, idx=idx + 1, address=address, results=results)
         except:  # TODO: what type of exception are you expecting?
-            results.append(_many_AND(address))
+            results.append(multi_AND(*address))
     return results
-
-
-def _many_AND(input):
-    out = 1
-    for i in input:
-        out = AND(i, out)
-    return out
 
 
 class RAM:  # Get name of sub unit of RAM this is actually called.
