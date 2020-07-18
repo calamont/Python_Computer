@@ -2,7 +2,7 @@
 # from .bus import BUS
 from .transistor import transistor
 from .logic import AND, NOT, tri_state, multi_AND
-from .switch import OneBitRegister, tri_state_logic
+from .switch import OneBitRegister
 
 
 def two_bit_decoder(input):

@@ -23,7 +23,7 @@ class SRLatch:
 class NAND_SRLatch:
 
     def __init__(self): 
-        self.Q = 1
+        self.Q = 0
         self.inv_Q = 0
 
     def __call__(self, set_val=0, reset_val=0):
@@ -121,18 +121,21 @@ class PrimarySecondaryJKFlipFlop:
     """Primary-secedonary JK flip flop arrangement used to prevent racing."""
 
     def __init__(self): 
-        self.Q = 1
+        self.Q = 0
         self.inv_Q = 0
+        self.last_clock = 0
         self.primary_latch = NAND_SRLatch()
         self.secondary_latch = NAND_SRLatch()
 
     def __call__(self, set_val=0, reset_val=0, clock=0):
 
-        prev_Q = self.secondary_latch.Q
-        prev_inv_Q = self.secondary_latch.inv_Q
+        # prev_Q = self.secondary_latch.Q
+        # prev_inv_Q = self.secondary_latch.inv_Q
 
-        _set_val = NAND(self.secondary_latch.inv_Q, AND(set_val, clock))
-        _reset_val = NAND(self.secondary_latch.Q, AND(reset_val, clock))
+        delta_clock = clock >  self.last_clock  # trigger on rising edge
+        self.last_clock = clock
+        _set_val = NAND(self.secondary_latch.inv_Q, AND(set_val, delta_clock))
+        _reset_val = NAND(self.secondary_latch.Q, AND(reset_val, delta_clock))
         _set_val, _reset_val = self.primary_latch(_set_val, _reset_val)
 
         # Relicating behaviour of a NAND gate with a NOT(clock) signal by
