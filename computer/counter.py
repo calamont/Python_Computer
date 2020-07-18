@@ -1,5 +1,5 @@
 """Program counter to tell the computer what to do next."""
-from .logic import NOT, AND
+from .logic import NOT, AND, NAND, NOR, OR
 from .switch import PrimarySecondaryJKFlipFlop
 
 class Counter:
@@ -22,17 +22,20 @@ class SynchronousCounter:
         self.nbits = nbits
         self.latches = [PrimarySecondaryJKFlipFlop() for _ in range(nbits)]
 
-    def __call__(self, clock=1):
+    def __call__(self, clock=1, clear=0):
         output = []
         input = 1
         for FlipFlop in self.latches:
-            Q, _ = FlipFlop(input, input, clock)
+            # NAND of the clock and clear should input a 0 to the J input when
+            # clear and the clock is high, given an output of 0.
+            Q, _ = FlipFlop(OR(clear, OR(input, clear)),
+                            NOR(clear, NOR(input, clear)), clock)
             output.append(NOT(Q))
             input = AND(Q, input)
         return output
 
 
-class ProgramCounter(Counter):
+class ProgramCounter(SynchronousCounter):
 
     def __init__(self, nbits):
         super().__init__(nbits)
