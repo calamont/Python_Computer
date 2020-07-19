@@ -2,18 +2,18 @@
 from .logic import NOT, AND, NAND, NOR, OR
 from .switch import PrimarySecondaryJKFlipFlop
 
-class Counter:
+# class Counter:
 
-    def __init__(self, nbits):
-        self.nbits = nbits
-        self.latches = [PrimarySecondaryJKFlipFlop() for _ in range(nbits)]
+#     def __init__(self, nbits):
+#         self.nbits = nbits
+#         self.latches = [PrimarySecondaryJKFlipFlop() for _ in range(nbits)]
 
-    def __call__(self, clock=1):
-        count = []
-        for FlipFlop in self.latches:
-            clock, _ = FlipFlop(1, 1, clock)
-            count.append(NOT(clock))
-        return count
+#     def __call__(self, clock=1):
+#         count = []
+#         for FlipFlop in self.latches:
+#             clock, _ = FlipFlop(1, 1, clock)
+#             count.append(NOT(clock))
+#         return count
 
 
 class Counter:
@@ -32,7 +32,30 @@ class Counter:
         return output
 
 
-class ProgramCounter:
+class ProgramCounterLoad:
+    """Program counter with load functionality"""
+
+    def __init__(self, nbits):
+        self.nbits = nbits
+        self.latches = [PrimarySecondaryJKFlipFlop() for _ in range(nbits)]
+
+    def __call__(self, clock=1, load=0, clear=0, data=None):
+        if data is None:
+            data = [0 for _ in range(self.nbits)]
+
+        output = []
+        input = 1
+        for FlipFlop, d in zip(self.latches, data):
+            J = OR(AND(input, NOT(load)), AND(NOT(d), load))
+            K = OR(AND(input, NOT(load)), AND(d, load))
+            Q, _ = FlipFlop(J, K, clock)
+            output.append(NOT(Q))
+            input = AND(Q, input)
+        return output
+
+
+class ProgramCounterClear:
+    """Program counter with clear functionality"""
 
     def __init__(self, nbits):
         self.nbits = nbits
